@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Logout Confirmado{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <!-- Card de logout -->
+    <div class="card card-elevate shadow-lg p-5 text-center logout-card" style="width: 400px;">
+        <h1 class="display-6 mb-3 logout-title">Logout realizado com sucesso!</h1>
+        <p class="lead text-muted mb-4">Você será redirecionado para a página de login em instantes.</p>
+        <p class="text-muted">Se o redirecionamento não ocorrer, clique
+            <a href="{{ url_for('auth.login') }}" class="link-brand fw-bold">aqui</a>.
+        </p>
+    </div>
+</div>
+
+<!-- Meta Tag para Redirecionamento -->
+<meta http-equiv="refresh" content="3;url={{ url_for('auth.login') }}">
+
+{% endblock %}

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Registrar-se{% endblock %}</title>
+
+    <!-- Fonte -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+
+    <!-- Tema global (paleta e utilitários) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+
+    <!-- Estilo específico de login/registro (mantido) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='login_register.css') }}" />
+  </head>
+  <body>
+    {% block content %}
+    <div class="auth-container">
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="d-flex justify-content-between align-items-center p-2 auth-brand">
+          <a class="navbar-brand">
+            <img
+              src="{{ url_for('static', filename='logo.png') }}"
+              alt="Logo"
+              class="img-fluid"
+              style="max-height: 100px"
+            />
+          </a>
+        </div>
+      </div>
+
+      <div class="auth-card card-elevate">
+        <h2 class="text-center auth-title">Registrar-se</h2>
+
+        <!-- Mensagens de Flash -->
+        <div class="auth-flash">
+          {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+        </div>
+
+        <!-- Formulário de Registro -->
+        <form method="post">
+          <div class="form-group">
+            <input
+              type="text"
+              id="nome_usuario"
+              name="nome_usuario"
+              placeholder="Nome de Usuário"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="E-mail"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <input
+              type="password"
+              id="senha"
+              name="senha"
+              placeholder="Senha"
+              class="form-control"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-block btn-primary btn-elevate">Registrar-se</button>
+        </form>
+
+        <p class="text-center mt-3 auth-alt">
+          Já tem uma conta? <a href="{{ url_for('auth.login') }}">Entrar</a>
+        </p>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
+</html>

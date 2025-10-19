@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block title %}Configurações de Produção{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <!-- Cabeçalho -->
+  <div class="d-flex justify-content-between align-items-center mb-4 page-header">
+    <h1 class="display-6 m-0">Calcular Lote de Peças</h1>
+    <a href="javascript:history.back()" class="btn btn-soft-danger">
+      <span class="btn-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="ms-1">Voltar</span>
+    </a>
+  </div>
+
+  <!-- Seleção -->
+  <div class="card shadow-sm mb-4 card-elevate form-card">
+    <div class="card-body">
+      <form onsubmit="return false;">
+        <fieldset class="fieldset">
+          <legend class="section-title">Seleção</legend>
+
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label fw-semibold">Peça</label>
+              <select id="peca" class="form-select select-hero">
+                <option value="" selected disabled>Selecione uma peça</option>
+                {% for p in pecas %}
+                <option
+                  value="{{ p.id }}"
+                  data-preco="{{ p.preco if p.preco is not none else 0 }}"
+                  data-peso="{{ p.peso_kg if p.peso_kg is not none else 0 }}"
+                  data-c="{{ p.comprimento_mm if p.comprimento_mm is not none else '' }}"
+                  data-l="{{ p.largura_mm if p.largura_mm is not none else '' }}"
+                  data-a="{{ p.altura_mm if p.altura_mm is not none else '' }}"
+                >
+                  {{ p.nome }} • {{ p.codigo }}
+                </option>
+                {% endfor %}
+              </select>
+              <small class="input-hint">Os cálculos usam preço/peso/dimensões cadastrados na peça.</small>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Quantidade</label>
+              <input
+                id="qtd"
+                type="number"
+                class="form-control qty-input"
+                min="1"
+                value="1"
+                step="1"
+              />
+              <small class="input-hint">Informe a quantidade desejada para estimar totais.</small>
+            </div>
+          </div>
+
+          <div class="form-actions d-flex justify-content-end gap-2 mt-4">
+            <button id="btnCalcular" class="btn btn-primary btn-elevate">
+              <span class="btn-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 3H3v18h18V3zM7 7h10M7 12h10M7 17h4" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="ms-1">Calcular</span>
+            </button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+  <!-- Resultados -->
+  <div class="card shadow-sm card-elevate">
+    <div class="card-body">
+      <fieldset class="fieldset">
+        <legend class="section-title">Resultados</legend>
+
+        <div class="row text-center g-3 stat-grid">
+          <div class="col-md-3">
+            <div class="stat-card kpi-accent-red">
+              <div class="kpi-title">Preço Total</div>
+              <div id="precoTotal" class="kpi-value">—</div>
+              <div class="kpi-sub text-muted">em R$</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <div class="kpi-title">Peso Total</div>
+              <div id="pesoTotal" class="kpi-value">—</div>
+              <div class="kpi-sub text-muted">(kg)</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <div class="kpi-title">Volume (m³)</div>
+              <div id="volumeTotal" class="kpi-value">—</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <div class="kpi-title">Dimensões (mm)</div>
+              <div class="kpi-value" id="dimensoes" style="font-size: 1.25rem">—</div>
+              <div class="kpi-sub text-muted">C × L × A</div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+</div>
+
+<script>
+  // mesma filosofia: nada de mudar lógica do app, só calcular no cliente
+  (function () {
+    const sel = document.getElementById("peca");
+    const qtd = document.getElementById("qtd");
+    const btn = document.getElementById("btnCalcular");
+
+    const outPreco = document.getElementById("precoTotal");
+    const outPeso = document.getElementById("pesoTotal");
+    const outVolume = document.getElementById("volumeTotal");
+    const outDims = document.getElementById("dimensoes");
+
+    function num(v) { return v === "" || v == null ? NaN : Number(String(v).replace(",", ".")); }
+    function moeda(n) { return !isFinite(n) ? "—" : "R$ " + n.toFixed(2); }
+    function fix3(n) { return isFinite(n) ? n.toFixed(3) : "—"; }
+
+    function calcular() {
+      const opt = sel.options[sel.selectedIndex];
+      if (!opt || !opt.value) { alert("Selecione uma peça."); return; }
+      const q = Math.max(1, parseInt(qtd.value || "1", 10));
+
+      const preco = num(opt.dataset.preco) || 0;
+      const peso  = num(opt.dataset.peso)  || 0;
+
+      const c = num(opt.dataset.c), l = num(opt.dataset.l), a = num(opt.dataset.a);
+
+      // Preço total e peso total
+      const totalPreco = preco * q;
+      const totalPeso  = peso * q;
+
+      // Volume estimado (mm³ -> m³)
+      const volUnit = (isFinite(c) && isFinite(l) && isFinite(a)) ? c * l * a : NaN;
+      const volM3   = isFinite(volUnit) ? (volUnit * q) / 1_000_000_000 : NaN;
+
+      outPreco.textContent = moeda(totalPreco);
+      outPeso.textContent  = fix3(totalPeso);
+      outVolume.textContent = fix3(volM3);
+      outDims.textContent  = (isFinite(c) && isFinite(l) && isFinite(a))
+        ? `${fix3(c)} × ${fix3(l)} × ${fix3(a)}`
+        : "—";
+    }
+
+    btn.addEventListener("click", calcular);
+    // Cálculo imediato ao trocar peça/quantidade
+    sel.addEventListener("change", calcular);
+    qtd.addEventListener("input", calcular);
+  })();
+</script>
+{% endblock %}

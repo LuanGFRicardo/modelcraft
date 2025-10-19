@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% block title %}Nova Peça{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 page-header">
+        <h1 class="display-6 m-0">Cadastrar Peça</h1>
+        <a href="javascript:history.back()" class="btn btn-soft-danger">
+            <span class="btn-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span class="ms-1">Voltar</span>
+        </a>
+    </div>
+
+    <div class="card shadow-sm card-elevate form-card">
+        <div class="card-body">
+           <form method="POST" enctype="multipart/form-data" action="{{ url_for('auth.salvar_peca_automatica') }}">
+                <!-- Básico -->
+                <fieldset class="fieldset">
+                    <legend class="section-title">Informações básicas</legend>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Nome *</label>
+                            <input type="text" name="nome" class="form-control" placeholder="Ex.: Suporte do motor" required>
+                            <small class="input-hint">Como a peça será identificada na listagem.</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Código *</label>
+                            <input type="text" name="codigo" class="form-control" placeholder="" required>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold">Descrição</label>
+                            <textarea name="descricao" class="form-control" rows="4" placeholder="Breve descrição técnica ou observações."></textarea>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Material</label>
+                            <input type="text" name="material" class="form-control" placeholder="Ex.: ABS, Alumínio 6061, Aço SAE 1020">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Arquivo JSON</label>
+                            <input type="file" name="meshFile" id="meshFile" class="form-control" accept=".json,application/json">
+                            <small class="input-hint">Opcional — anexe o arquivo de parâmetros/metadata.</small>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Medidas -->
+                <fieldset class="fieldset mt-4">
+                    <legend class="section-title">Dimensões e peso</legend>
+
+                    <div class="row g-3">
+                        <div class="col-6 col-md-3">
+                            <label class="form-label fw-semibold">Peso (kg)</label>
+                            <input type="number" name="peso_kg" id="peso_kg" step="0.001" class="form-control" placeholder="0.000">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label fw-semibold">Comprimento (mm)</label>
+                            <input type="number" name="comprimento_mm" id="width" step="0.01" class="form-control" placeholder="0.00">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label fw-semibold">Largura (mm)</label>
+                            <input type="number" name="largura_mm" id="depth" step="0.01" class="form-control" placeholder="0.00">
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <label class="form-label fw-semibold">Altura (mm)</label>
+                            <input type="number" name="altura_mm" id="height" step="0.01" class="form-control" placeholder="0.00">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Comercial -->
+                <fieldset class="fieldset mt-4">
+                    <legend class="section-title">Comercial</legend>
+
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Preço (R$)</label>
+                            <input type="number" name="preco" step="0.01" inputmode="decimal" class="form-control" placeholder="0,00">
+                        </div>
+
+                        
+                    </div>
+                </fieldset>
+
+                <div class="form-actions d-flex justify-content-end gap-2 mt-4">
+                    <a href="javascript:history.back()" class="btn btn-soft-danger">Cancelar</a>
+                    <button type="submit" class="btn btn-primary btn-elevate">
+                        <span class="btn-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 7v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7" />
+                                <path d="M3 7h18" />
+                                <path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
+                        </span>
+                        <span class="ms-1">Salvar Peça</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+  // Lê o JSON anexado e preenche as dimensões automaticamente
+  (function () {
+    const fileInput = document.getElementById('meshFile');
+    if (!fileInput) return;
+
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const json = JSON.parse(text);
+
+        let Xmin = Infinity, Ymin = Infinity, Zmin = Infinity;
+        let Xmax = -Infinity, Ymax = -Infinity, Zmax = -Infinity;
+        const buffer = [];
+
+        function* walkNumbers(node) {
+          if (node == null) return;
+          if (typeof node === 'number') yield node;
+          else if (Array.isArray(node)) for (const n of node) yield* walkNumbers(n);
+          else if (typeof node === 'object') for (const k in node) yield* walkNumbers(node[k]);
+        }
+
+        for (const num of walkNumbers(json.objects)) {
+          const val = Number(num);
+          if (!Number.isFinite(val)) continue;
+          buffer.push(val);
+          if (buffer.length === 3) {
+            const [x, y, z] = buffer;
+            Xmin = Math.min(Xmin, x); Xmax = Math.max(Xmax, x);
+            Ymin = Math.min(Ymin, y); Ymax = Math.max(Ymax, y);
+            Zmin = Math.min(Zmin, z); Zmax = Math.max(Zmax, z);
+            buffer.length = 0;
+          }
+        }
+
+        const width  = Xmax - Xmin;
+        const depth  = Ymax - Ymin;
+        const height = Zmax - Zmin;
+
+        // Preenche inputs
+        const $ = (id) => document.getElementById(id);
+        if ($('width'))  $('width').value  = Number(width).toFixed(3);
+        if ($('depth'))  $('depth').value  = Number(depth).toFixed(3);
+        if ($('height')) $('height').value = Number(height).toFixed(3);
+
+        // Peso estimado (exemplo simples): volume em mm³ -> L -> kg (densidade fictícia = 1)
+        const volume = width * depth * height; // mm³
+        if ($('peso_kg')) $('peso_kg').value = (volume / 1_000_000).toFixed(3);
+      } catch (e) {
+        console.error('[criar_peca] Falha ao processar JSON:', e);
+        alert('Não foi possível ler o arquivo JSON. Verifique o formato.');
+      }
+    });
+  })();
+</script>
+{% endblock %}

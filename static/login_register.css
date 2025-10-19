@@ -1,0 +1,194 @@
+/* Reseta margens, padding e fontes */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--brand-bg);
+    height: 100%;
+}
+
+/* Container Principal */
+.auth-container {
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background:
+      radial-gradient(1100px 520px at 110% -10%, rgba(217,4,4,.06), transparent 60%),
+      radial-gradient(900px 520px at -10% 120%, rgba(217,4,4,.04), transparent 60%),
+      var(--brand-bg);
+}
+
+/* Card de Autenticação */
+.auth-card {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 16px;
+    border: 1px solid var(--brand-border);
+    box-shadow: 0 10px 28px rgba(0,0,0,.08);
+    text-align: center;
+    width: 100%;
+    max-width: 420px;
+    opacity: 1;
+    transform: scale(1);
+    transition: all 0.5s ease;
+}
+
+/* Animações de Entrada e Saída */
+.auth-card.fade-in {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.auth-card.fade-out {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+}
+
+/* Títulos */
+.auth-card h2 {
+    color: var(--brand-text);
+    font-size: 1.9rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+
+/* Flash */
+.alert{
+    text-align: center;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,.06);
+    font-weight: 600;
+}
+
+/* Formulário */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+    width: 93%;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color .3s ease;
+    color: var(--brand-text);
+}
+
+.form-control::placeholder { color: #9aa0a6; }
+
+.form-control:focus {
+    border-color: var(--brand-red);
+    outline: none;
+    box-shadow: 0 0 0 .2rem rgba(217,4,4,.15);
+    background-color: #fff;
+}
+
+/* Botão */
+.btn {
+    background-image: linear-gradient(180deg, var(--brand-red) 0%, var(--brand-red-600) 100%);
+    color: #fff;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    width: 100%;
+    cursor: pointer;
+    transition: filter 0.2s ease, transform 0.2s ease, box-shadow .2s ease;
+    box-shadow: 0 10px 24px rgba(217,4,4,.22);
+}
+
+.btn:hover {
+    filter: brightness(1.02);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(217,4,4,.28);
+}
+
+.btn:active{
+    transform: translateY(0);
+    background: var(--brand-red-700);
+    box-shadow: none;
+}
+
+/* Links */
+.auth-card a {
+    display: inline-block;
+    color: var(--brand-red);
+    font-weight: 800;
+    text-decoration: none;
+    transition: color 0.2s ease, border-color .2s ease;
+    margin-top: 10px;
+    border-bottom: 2px solid transparent;
+}
+
+.auth-card a:hover {
+    color: var(--brand-red);
+    border-color: var(--brand-red);
+}
+
+/* Navbar/logo */
+.navbar-collapse {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar-brand {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar-brand img {
+    max-height: 80px;
+    height: auto;
+    filter: none;
+    opacity: .95;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .auth-container {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        height: 100%;
+        padding: 16px;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 480px;
+        height: auto;
+        border-radius: 16px;
+        padding: 22px;
+    }
+
+    .auth-card h2 {
+        font-size: 1.6rem;
+    }
+
+    .form-group {
+        width: 92%;
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+
+    .btn {
+        font-size: 0.95rem;
+        padding: 10px;
+    }
+}
