@@ -5,18 +5,9 @@
   <!-- Cabeçalho -->
   <div class="d-flex justify-content-between align-items-center mb-4 page-header">
     <h1 class="display-6 m-0">Calcular Lote de Peças</h1>
-    <a href="javascript:history.back()" class="btn btn-soft-danger">
-      <span class="btn-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-      <span class="ms-1">Voltar</span>
-    </a>
   </div>
 
   <!-- Seleção -->
-  <div class="card shadow-sm mb-4 card-elevate form-card">
     <div class="card-body">
       <form onsubmit="return false;">
         <fieldset class="fieldset">
@@ -70,47 +61,41 @@
         </fieldset>
       </form>
     </div>
-  </div>
 
-  <!-- Resultados -->
-  <div class="card shadow-sm card-elevate">
-    <div class="card-body">
-      <fieldset class="fieldset">
-        <legend class="section-title">Resultados</legend>
+    <!-- Resultados -->
+    <fieldset class="fieldset">
+      <legend class="section-title">Resultados</legend>
 
-        <div class="row text-center g-3 stat-grid">
-          <div class="col-md-3">
-            <div class="stat-card kpi-accent-red">
-              <div class="kpi-title">Preço Total</div>
-              <div id="precoTotal" class="kpi-value">—</div>
-              <div class="kpi-sub text-muted">em R$</div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="stat-card">
-              <div class="kpi-title">Peso Total</div>
-              <div id="pesoTotal" class="kpi-value">—</div>
-              <div class="kpi-sub text-muted">(kg)</div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="stat-card">
-              <div class="kpi-title">Volume (m³)</div>
-              <div id="volumeTotal" class="kpi-value">—</div>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="stat-card">
-              <div class="kpi-title">Dimensões (mm)</div>
-              <div class="kpi-value" id="dimensoes" style="font-size: 1.25rem">—</div>
-              <div class="kpi-sub text-muted">C × L × A</div>
-            </div>
+      <div class="row text-center g-3 stat-grid">
+        <div class="col-md-3">
+          <div class="stat-card kpi-accent-red">
+            <div class="kpi-title">Preço Total</div>
+            <div id="precoTotal" class="kpi-value">—</div>
+            <div class="kpi-sub text-muted">em R$</div>
           </div>
         </div>
-      </fieldset>
-    </div>
-  </div>
-</div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="kpi-title">Peso Total</div>
+            <div id="pesoTotal" class="kpi-value">—</div>
+            <div class="kpi-sub text-muted">(kg)</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="kpi-title">Volume (m³)</div>
+            <div id="volumeTotal" class="kpi-value">—</div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="stat-card">
+            <div class="kpi-title">Dimensões (mm)</div>
+            <div class="kpi-value" id="dimensoes" style="font-size: 1.25rem">—</div>
+            <div class="kpi-sub text-muted">C × L × A</div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
 
 <script>
   // mesma filosofia: nada de mudar lógica do app, só calcular no cliente
