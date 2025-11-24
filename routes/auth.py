@@ -90,7 +90,7 @@ def salvar_peca_automatica():
     arquivo = request.files.get('meshFile')
 
     if not nome or not arquivo:
-        flash('Nome e arquivo são obrigatórios.', 'erro')
+        flash('Nome e arquivo são obrigatórios.', 'erro-arquivo')
         return redirect(url_for('auth.nova_peca'))
 
     # Salva o arquivo em /uploads
@@ -114,7 +114,7 @@ def salvar_peca_automatica():
     )
     db.session.add(peca)
     db.session.commit()
-    flash(f'Peça "{nome}" criada automaticamente com sucesso!', 'sucesso')
+    flash(f'Peça "{nome}" criada automaticamente com sucesso!', 'sucesso-peca')
     return redirect(url_for('auth.listagem'))
 
 # Editar peça (formulário)
@@ -163,10 +163,10 @@ def atualizar_peca(id):
 
     try:
         db.session.commit()
-        flash('Peça atualizada com sucesso!', 'sucesso')
+        flash('Peça atualizada com sucesso!', 'sucesso-peca')
     except Exception:
         db.session.rollback()
-        flash('Erro ao atualizar a peça.', 'erro')
+        flash('Erro ao atualizar a peça.', 'erro-peca')
 
     return redirect(url_for('auth.listagem'))
 
@@ -178,10 +178,10 @@ def excluir_peca(id):
     try:
         db.session.delete(peca)
         db.session.commit()
-        flash('Peça excluída com sucesso!', 'sucesso')
+        flash('Peça excluída com sucesso!', 'sucesso-peca')
     except Exception:
         db.session.rollback()
-        flash('Erro ao excluir a peça.', 'erro')
+        flash('Erro ao excluir a peça.', 'erro-peca')
     return redirect(url_for('auth.listagem'))
 
 #
